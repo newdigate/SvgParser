@@ -1,6 +1,8 @@
 #include "SvgParser.h"
 #define COMPAT_TEST
 
+
+
 #if defined(ESP8266) || defined(COMPAT_TEST)
 unsigned int
 xtoi(const char *hexStr)
@@ -32,8 +34,9 @@ xtoi(const char *hexStr)
 extern "C" {
 #include "user_interface.h"
 }
-
 #endif
+
+
 
 SvgParser::SvgParser(SvgOutput *newout)
 {
@@ -540,6 +543,7 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
         float last_x, last_y;
         uint16_t convertedLen=0;
         uint16_t *converted;
+        bool closed_path = false;
         
         if(!getProperty(start, "d", &data))
             return false;
@@ -563,6 +567,7 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
             // DBG_OUT("style prop : %s\n",ptr);
             if(*ptr == 'M') absolutePos = true;
             else if (*ptr == 'm') absolutePos = false;
+            else if (*ptr == 'z' || *ptr == 'Z') closed_path = true;
             else if (*ptr >= '0' && *ptr <= '9' || *ptr == '-'){
 #if defined(ESP8266) || defined(COMPAT_TEST)
                 x = atof(ptr);
@@ -919,8 +924,24 @@ uint8_t SvgParser::readFile(char * fileNameIn){
     strcpy(fileName, fileNameIn);
     // clean up first
     cleanup();
+#if defined(USE_SD)
+    File f = SD.open(fileName);
+    if (f) {
+        _bufLen = f.size();
 
-#ifdef ESP8266
+        _data = (char *)malloc(_bufLen + 1);
+        if(_data == NULL) {
+            f.close();
+            return false;
+        }
+        if (f.read(_data, _bufLen) != _bufLen){
+            free(_data);
+            f.close();
+            return false;
+        }
+        f.close();
+    } else return false;
+#elif defined(ESP8266)
      if (!SPIFFS.begin())
          return false;
 

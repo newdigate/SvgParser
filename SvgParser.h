@@ -19,7 +19,13 @@
 #define DBG_OUT printf
 #endif
 
+#define USE_SD 1
 
+#if defined(USE_SD)
+#include "SD.h"
+#endif
+
+/*
 #ifndef uint8_t
 #define uint8_t unsigned char
 #endif
@@ -40,18 +46,18 @@
 #define uint32_t unsigned int
 #endif
 
-
+*/
 // ATTENTION: whenever you modify this line, change 'svgTypeNames' in 'processTag' accordingly!
 enum svgTypes_t {SVG, RECT, TEXT, TSPAN, GROUP, PATH, LINK, CIRCLE, NONE};
 enum svgPropertyState_t {UNDEFINED, UNSET, SET};
 
 struct svgStyle_t {
-    int16_t  x_offset;
-    int16_t  y_offset;
+    int16_t  x_offset = 0;
+    int16_t  y_offset = 0;
     int16_t  x;
     int16_t  y;
-    float    x_scale;
-    float    y_scale;
+    float    x_scale = 1.0;
+    float    y_scale = 1.0;
     
     struct svgLinkList_t *linkRef;
     
@@ -140,9 +146,9 @@ private:
     uint16_t _bufLen, _curPos;
     char  * _data = NULL;
     
-    int8_t * _callbackStart = "&lt;@";
-    int8_t * _callbackEnd = "@&gt;";
-    int8_t * _linkSplit = "@";
+    char * _callbackStart = "&lt;@";
+    char * _callbackEnd = "@&gt;";
+    char * _linkSplit = "@";
 
     bool _automaticLinkManagement = true;
     
