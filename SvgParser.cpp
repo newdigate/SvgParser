@@ -543,7 +543,14 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
         float last_x, last_y;
         uint16_t convertedLen=0;
         uint16_t *converted;
+        int16_t *curvePoints;
+        uint16_t curvePointsLen=0;
+
         bool closed_path = false;
+        bool quadraticBezier = false;
+        bool quadraticBezierDelta = false;
+        bool curve = false;
+        bool curveDelta = false;
         
         if(!getProperty(start, "d", &data))
             return false;
@@ -586,8 +593,27 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
 #endif
                 //x *= style->x_scale;
                 //y *= style->y_scale;
-                
-                if(first || absolutePos){
+
+                if (curve) {
+                    curvePoints[curvePointsLen*2] = x;
+                    curvePoints[curvePointsLen*2 + 1] = y;
+                    curvePointsLen++;
+
+                    if (curvePointsLen == 3) {
+                        int secondPointX = last_x+curvePoints[0];
+                        int secondPointY = last_y+curvePoints[1];
+                        int thirdPointX = last_x+curvePoints[2];
+                        int thirdPointY = last_y+curvePoints[3];
+                        int forthPointX = last_x+curvePoints[4];
+                        int forthPointY = last_y+curvePoints[5];
+                        _output->quadCurve(0.1, last_x, last_y, secondPointX, secondPointY, thirdPointX, thirdPointY, forthPointX, forthPointY, style);
+                        //delete [] curvePoints;
+                        curvePointsLen = 0;
+                        last_x = forthPointX;
+                        last_y = forthPointY;
+                    }
+                } else
+                    if(first || absolutePos){
                     first = false;
                     
                     last_x = style->x_offset + x * (float)style->x_scale;
@@ -598,10 +624,38 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
                     last_x += x/2 * (float)style->x_scale;
                     last_y += y/2 * (float)style->x_scale;
                 }
-                
-                converted[convertedLen*2  ] = last_x;
-                converted[convertedLen*2+1] = last_y;
-                convertedLen++;
+
+                if (!curve) {
+                    converted[convertedLen * 2] = last_x;
+                    converted[convertedLen * 2 + 1] = last_y;
+                    convertedLen++;
+                }
+            }
+            else if (*ptr == 'c') {
+
+                _output->path(converted, convertedLen, style);
+                convertedLen = 0;
+
+                curve = true;
+                curveDelta = true;
+                curvePoints = new int16_t[3*2];
+                curvePointsLen = 0;
+            }
+            else if (*ptr == 'C') {
+                _output->path(converted, convertedLen, style);
+                convertedLen = 0;
+
+                curve = true;
+                curveDelta = false;
+                curvePoints = new int16_t[3*2];
+                curvePointsLen = 0;
+            }
+            else if (*ptr == 'q') {
+                quadraticBezier = true;
+                quadraticBezierDelta = true;
+            } else if (*ptr == 'Q') {
+                quadraticBezier = true;
+                quadraticBezierDelta = false;
             }
             // ignore curves, arcs etc.
             

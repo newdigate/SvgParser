@@ -20,11 +20,23 @@ public:
     inline uint16_t color565(uint8_t r, uint8_t g, uint8_t b) {
         return ((b & 0xF8) << 8) | ((g & 0xFC) << 3) | (r >> 3);
     }
+
+    virtual void quadCurve(float delta, int p0x, int p0y, int p1x, int p1y, int p2x, int p2y, struct svgStyle_t * style);
+
+    virtual void quadCurve(float delta, int p0x, int p0y, int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, struct svgStyle_t * style);
 private:
     ST7735_t3 &tft;
     uint16_t convertColor(uint32_t color){
         return color565((color & 0x00FF0000) >> 16, (color & 0x0000FF00) >> 8, color & 0x000000FF);
     }
+
+    static int getPt( int n1 , int n2 , float perc )
+    {
+        int diff = n2 - n1;
+
+        return n1 + ( diff * perc );
+    }
+
 };
 
 #endif

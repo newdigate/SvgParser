@@ -117,10 +117,18 @@ public:
     virtual void path(uint16_t *data, uint16_t len, struct svgStyle_t * style)
     { 
         DBG_OUT("PATH: len: %i \n",len);
-    }    
+    }
+
+    virtual void quadCurve(float delta, int p0x, int p0y, int p1x, int p1y, int p2x, int p2y, struct svgStyle_t * style) {
+        DBG_OUT("QUAD: delta:%f \t p0.x:%i, p0.y:%i\t p1.x:%i, p1.y:%i \t p2.x:%i, p2.y:%i\n", delta, p0x, p0y, p1x, p1y, p2x, p2y);
+    }
+
+    virtual void quadCurve(float delta, int p0x, int p0y, int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, struct svgStyle_t * style) {
+        DBG_OUT("QUAD: delta: %f \t p0.x:%i, p0.y:%i \t p1.x:%i, p1.y:%i \t p2.x:%i, p2.y:%i \t p3.x:%i, p3.y:%i\n", delta, p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y);
+    }
+
     
 private:
-    
 };
 
 // Class functions and variables
