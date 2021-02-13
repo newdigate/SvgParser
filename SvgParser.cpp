@@ -543,7 +543,7 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
         float last_x, last_y;
         uint16_t convertedLen=0;
         uint16_t *converted;
-        int16_t *curvePoints;
+        float *curvePoints;
         uint16_t curvePointsLen=0;
 
         bool closed_path = false;
@@ -600,12 +600,12 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
                     curvePointsLen++;
 
                     if (curvePointsLen == 3) {
-                        int secondPointX = last_x+curvePoints[0];
-                        int secondPointY = last_y+curvePoints[1];
-                        int thirdPointX = last_x+curvePoints[2];
-                        int thirdPointY = last_y+curvePoints[3];
-                        int forthPointX = last_x+curvePoints[4];
-                        int forthPointY = last_y+curvePoints[5];
+                        float secondPointX = (curveDelta)? last_x + curvePoints[0] : curvePoints[0];
+                        float secondPointY = (curveDelta)? last_y+curvePoints[1] : curvePoints[1];
+                        float thirdPointX = (curveDelta)? last_x+curvePoints[2] : curvePoints[2];
+                        float thirdPointY = (curveDelta)? last_y+curvePoints[3] : curvePoints[3];
+                        float forthPointX = (curveDelta)? last_x+curvePoints[4] : curvePoints[4];
+                        float forthPointY = (curveDelta)? last_y+curvePoints[5] : curvePoints[5];
                         _output->quadCurve(0.1, last_x, last_y, secondPointX, secondPointY, thirdPointX, thirdPointY, forthPointX, forthPointY, style);
                         //delete [] curvePoints;
                         curvePointsLen = 0;
@@ -638,7 +638,7 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
 
                 curve = true;
                 curveDelta = true;
-                curvePoints = new int16_t[3*2];
+                curvePoints = new float[3*2];
                 curvePointsLen = 0;
             }
             else if (*ptr == 'C') {
@@ -647,7 +647,7 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
 
                 curve = true;
                 curveDelta = false;
-                curvePoints = new int16_t[3*2];
+                curvePoints = new float[3*2];
                 curvePointsLen = 0;
             }
             else if (*ptr == 'q') {

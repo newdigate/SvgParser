@@ -119,12 +119,12 @@ public:
         DBG_OUT("PATH: len: %i \n",len);
     }
 
-    virtual void quadCurve(float delta, int p0x, int p0y, int p1x, int p1y, int p2x, int p2y, struct svgStyle_t * style) {
-        DBG_OUT("QUAD: delta:%f \t p0.x:%i, p0.y:%i\t p1.x:%i, p1.y:%i \t p2.x:%i, p2.y:%i\n", delta, p0x, p0y, p1x, p1y, p2x, p2y);
+    virtual void quadCurve(float delta, float p0x, float p0y, float p1x, float p1y, float p2x, float p2y, struct svgStyle_t * style) {
+        DBG_OUT("QUAD: delta:%f \t p0.x:%f, p0.y:%f\t p1.x:%f, p1.y:%f \t p2.x:%f, p2.y:%f\n", delta, p0x, p0y, p1x, p1y, p2x, p2y);
     }
 
-    virtual void quadCurve(float delta, int p0x, int p0y, int p1x, int p1y, int p2x, int p2y, int p3x, int p3y, struct svgStyle_t * style) {
-        DBG_OUT("QUAD: delta: %f \t p0.x:%i, p0.y:%i \t p1.x:%i, p1.y:%i \t p2.x:%i, p2.y:%i \t p3.x:%i, p3.y:%i\n", delta, p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y);
+    virtual void quadCurve(float delta, float p0x, float p0y, float p1x, float p1y, float p2x, float p2y, float p3x, float p3y, struct svgStyle_t * style) {
+        DBG_OUT("QUAD: delta: %f \t p0.x:%f, p0.y:%f \t p1.x:%f, p1.y:%f \t p2.x:%f, p2.y:%f \t p3.x:%f, p3.y:%f\n", delta, p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y);
     }
 
     
