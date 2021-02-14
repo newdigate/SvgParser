@@ -5,7 +5,7 @@
 
 #ifdef BUILD_FOR_OPENGL_EMULATOR
 #include "st7735_opengl.h"
-st7735_opengl TFT = st7735_opengl();
+st7735_opengl TFT = st7735_opengl(true);
 #else
 #define TFT_CS   6  // CS & DC can use pins 2, 6, 9, 10, 15, 20, 21, 22, 23
 #define TFT_DC    2  //  but certain pairs must NOT be used: 2+10, 6+9, 20+23, 21+22

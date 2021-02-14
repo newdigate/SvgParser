@@ -541,6 +541,7 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
         uint8_t absolutePos = true;
         uint8_t first = true;
         float last_x, last_y;
+        float firstPoint_x, firstPoint_y;
         uint16_t convertedLen=0;
         uint16_t *converted;
         float *curvePoints;
@@ -574,7 +575,15 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
             // DBG_OUT("style prop : %s\n",ptr);
             if(*ptr == 'M') absolutePos = true;
             else if (*ptr == 'm') absolutePos = false;
-            else if (*ptr == 'z' || *ptr == 'Z') closed_path = true;
+            else if (*ptr == 'z' || *ptr == 'Z') {
+                closed_path = true;
+                uint16_t closePath[2*2];
+                closePath[0] = round(last_x);
+                closePath[1] = round(last_y);
+                closePath[2] = round(firstPoint_x);
+                closePath[3] = round(firstPoint_y);
+                _output->path (closePath, 2, style );
+            }
             else if (*ptr >= '0' && *ptr <= '9' || *ptr == '-'){
 #if defined(ESP8266) || defined(COMPAT_TEST)
                 x = atof(ptr);
@@ -606,7 +615,7 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
                         float thirdPointY = (curveDelta)? last_y+curvePoints[3] : curvePoints[3];
                         float forthPointX = (curveDelta)? last_x+curvePoints[4] : curvePoints[4];
                         float forthPointY = (curveDelta)? last_y+curvePoints[5] : curvePoints[5];
-                        _output->quadCurve(0.1, last_x, last_y, secondPointX, secondPointY, thirdPointX, thirdPointY, forthPointX, forthPointY, style);
+                        _output->quadCurve(0.25, last_x, last_y, secondPointX, secondPointY, thirdPointX, thirdPointY, forthPointX, forthPointY, style);
                         //delete [] curvePoints;
                         curvePointsLen = 0;
                         last_x = forthPointX;
@@ -614,12 +623,14 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
                     }
                 } else
                     if(first || absolutePos){
-                    first = false;
-                    
-                    last_x = style->x_offset + x * (float)style->x_scale;
-                    last_y = style->y_offset + y * (float)style->x_scale;
-                    
-                    
+                        last_x = style->x_offset + x * (float)style->x_scale;
+                        last_y = style->y_offset + y * (float)style->x_scale;
+                        if (first) {
+                            firstPoint_x = last_x;
+                            firstPoint_y = last_y;
+                        }
+                        first = false;
+
                 } else {
                     last_x += x/2 * (float)style->x_scale;
                     last_y += y/2 * (float)style->x_scale;

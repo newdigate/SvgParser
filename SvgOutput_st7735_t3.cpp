@@ -81,24 +81,8 @@ void
 SvgOutput_ST7735::quadCurve(float delta, float p0x, float p0y, float p1x, float p1y, float p2x, float p2y, struct svgStyle_t *style) {
     if(style->stroke_color_set == UNSET) return;
     uint16_t color = convertColor(style->stroke_color);
-    float x = p0x, y = p0y;
     DBG_OUT("QUAD: delta:%f \t p0.x:%f, p0.y:%f\t p1.x:%f, p1.y:%f \t p2.x:%f, p2.y:%f\n", delta, p0x, p0y, p1x, p1y, p2x, p2y);
-    for( float i = 0.0f ; i < 1 ; i += delta )
-    {
-        // The Green Line
-        float xa = getPt( p0x , p1x , i );
-        float ya = getPt( p0y , p1y , i );
-        float xb = getPt( p1x , p2x , i );
-        float yb = getPt( p1y , p2y , i );
-
-        // The Black Dot
-        float x2 = getPt( xa , xb , i );
-        float y2 = getPt( ya , yb , i );
-
-        tft.drawLine( x, y, x2, y2, color );
-        x = x2;
-        y = y2;
-    }
+    tft.drawCurve(delta, p0x, p0y, p1x, p1y, p2x, p2y, color, ST7735_WHITE);
 }
 
 void SvgOutput_ST7735::quadCurve(float delta, float p0x, float p0y, float p1x, float p1y, float p2x, float p2y, float p3x, float p3y, struct svgStyle_t *style) {
@@ -106,30 +90,6 @@ void SvgOutput_ST7735::quadCurve(float delta, float p0x, float p0y, float p1x, f
     if(style->stroke_color_set == UNSET) return;
     uint16_t color = convertColor(style->stroke_color);
 
-    float x = p0x, y = p0y;
     DBG_OUT("QUAD: delta: %f \t p0.x:%f, p0.y:%f \t p1.x:%f, p1.y:%f \t p2.x:%f, p2.y:%f \t p3.x:%f, p3.y:%f\n", delta, p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y);
-    for( float i = delta ; i < 1 ; i += delta )
-    {
-        // The Green Lines
-        float xa = getPt( p0x , p1x , i );
-        float ya = getPt( p0y , p1y , i );
-        float xb = getPt( p1x , p2x , i );
-        float yb = getPt( p1y , p2y , i );
-        float xc = getPt( p2x , p3x , i );
-        float yc = getPt( p2y , p3y , i );
-
-        // The Blue Line
-        float xm = getPt( xa , xb , i );
-        float ym = getPt( ya , yb , i );
-        float xn = getPt( xb , xc , i );
-        float yn = getPt( yb , yc , i );
-
-        // The Black Dot
-        float x2 = getPt( xm , xn , i );
-        float y2 = getPt( ym , yn , i );
-
-        tft.drawLine( x, y, x2, y2, color );
-        x = x2;
-        y = y2;
-    }
+    tft.drawCurve(delta, p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y, color, ST7735_WHITE);
 }
