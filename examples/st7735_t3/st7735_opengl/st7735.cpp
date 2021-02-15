@@ -70,6 +70,7 @@ void setup() {
     TFT.initR(INITR_144GREENTAB);
     TFT.setRotation(3);
     TFT.fillScreen(ST7735_WHITE);
+    st7735_out->setBackgroundColor(ST7735_BLACK);
     parser.readFile("abc.svg");
     parser.print(0,0);
 }

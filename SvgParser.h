@@ -118,6 +118,15 @@ public:
     { 
         DBG_OUT("PATH: len: %i \n",len);
     }
+    virtual void path(float *data, uint16_t len, struct svgStyle_t * style)
+    {
+        DBG_OUT("PATH: len: %i \n",len);
+    }
+
+    virtual void setBackgroundColor(uint16_t bgcolor) {
+        _backgroundColor = bgcolor;
+    }
+
 
     virtual void quadCurve(float delta, float p0x, float p0y, float p1x, float p1y, float p2x, float p2y, struct svgStyle_t * style) {
         DBG_OUT("QUAD: delta:%f \t p0.x:%f, p0.y:%f\t p1.x:%f, p1.y:%f \t p2.x:%f, p2.y:%f\n", delta, p0x, p0y, p1x, p1y, p2x, p2y);
@@ -127,7 +136,7 @@ public:
         DBG_OUT("QUAD: delta: %f \t p0.x:%f, p0.y:%f \t p1.x:%f, p1.y:%f \t p2.x:%f, p2.y:%f \t p3.x:%f, p3.y:%f\n", delta, p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y);
     }
 
-    
+    uint16_t _backgroundColor = 0;
 private:
 };
 

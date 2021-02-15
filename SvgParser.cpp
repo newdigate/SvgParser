@@ -543,7 +543,7 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
         float last_x, last_y;
         float firstPoint_x, firstPoint_y;
         uint16_t convertedLen=0;
-        uint16_t *converted;
+        float *converted;
         float *curvePoints;
         uint16_t curvePointsLen=0;
 
@@ -562,7 +562,7 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
  //       DBG_OUT("stroke color %X stroke width %i \n",style->stroke_color,style->stroke_width);        
         
         //      DBG_OUT("data %s \n",data);        
-        converted = (uint16_t *)data;
+        converted = (float *)data;
         // the plain text is overwritten by the coordinate array
         ptr = data;
         for(;;){
@@ -577,11 +577,11 @@ uint8_t SvgParser::processElement(char * start, enum svgTypes_t type, struct svg
             else if (*ptr == 'm') absolutePos = false;
             else if (*ptr == 'z' || *ptr == 'Z') {
                 closed_path = true;
-                uint16_t closePath[2*2];
-                closePath[0] = round(last_x);
-                closePath[1] = round(last_y);
-                closePath[2] = round(firstPoint_x);
-                closePath[3] = round(firstPoint_y);
+                float closePath[2*2];
+                closePath[0] = last_x;
+                closePath[1] = last_y;
+                closePath[2] = firstPoint_x;
+                closePath[3] = firstPoint_y;
                 _output->path (closePath, 2, style );
             }
             else if (*ptr >= '0' && *ptr <= '9' || *ptr == '-'){

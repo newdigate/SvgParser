@@ -77,6 +77,21 @@ void SvgOutput_ST7735::path(unsigned short *data, unsigned short len, struct svg
     DBG_OUT("\n");
 }
 
+void SvgOutput_ST7735::path(float *data, uint16_t len, struct svgStyle_t *style) {
+    if (len < 2) return;
+    if (style->stroke_color_set == UNSET) return;
+    uint16_t color = convertColor(style->stroke_color);
+    DBG_OUT("PATH: len: %i; (", len);
+
+    for (uint16_t i = 1; i < len; i++) {
+        tft.drawLine(data[(i - 1) * 2], data[(i - 1) * 2 + 1], data[i * 2], data[i * 2 + 1], color, _backgroundColor);
+        DBG_OUT("%f, %f   ", data[(i - 1) * 2], data[(i - 1) * 2 + 1]);
+    }
+    DBG_OUT("%f, %f )", data[(len - 1) * 2], data[(len - 1) * 2 + 1]);
+    DBG_OUT("\n");
+}
+
+
 void
 SvgOutput_ST7735::quadCurve(float delta, float p0x, float p0y, float p1x, float p1y, float p2x, float p2y, struct svgStyle_t *style) {
     if(style->stroke_color_set == UNSET) return;
@@ -93,3 +108,4 @@ void SvgOutput_ST7735::quadCurve(float delta, float p0x, float p0y, float p1x, f
     DBG_OUT("QUAD: delta: %f \t p0.x:%f, p0.y:%f \t p1.x:%f, p1.y:%f \t p2.x:%f, p2.y:%f \t p3.x:%f, p3.y:%f\n", delta, p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y);
     tft.drawCurve(delta, p0x, p0y, p1x, p1y, p2x, p2y, p3x, p3y, color, ST7735_WHITE);
 }
+
